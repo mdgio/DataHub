@@ -1,0 +1,164 @@
+{
+  "dataset": {
+    "data": {"features": []},
+    "mappings": {
+      "query": {
+        "where": "1=1",
+        "returnGeometry": false,
+        "returnDistinctValues": false,
+        "returnIdsOnly": false,
+        "returnCountOnly": false,
+        "outFields": "*",
+        "sqlFormat": "standard",
+        "f": "json"
+      }
+    },
+    "query": {
+      "where": "1=1",
+      "returnGeometry": false,
+      "returnDistinctValues": false,
+      "returnIdsOnly": false,
+      "returnCountOnly": false,
+      "outFields": "*",
+      "sqlFormat": "standard",
+      "f": "json"
+    }
+  },
+  "specification": {
+    "inputs": [],
+    "template": {
+      "padding": "strict",
+      "data": [
+        {
+          "name": "dummy",
+          "url": "https://example.org",
+          "format": {"type": "json","property": "features"}
+        },
+        {
+          "name": "table",
+          "url": "https://data.maryland.gov/resource/bu35-imdp.json",
+          "format": {
+            "type": "json",
+            "parse": {"service_charges_revenue_per_capita": "number"}
+          },
+          "transform": [
+            {
+              "type": "pie",
+              "field": "service_charges_revenue_per_capita"
+            }
+          ]
+        }
+      ],
+      "signals": [
+        {
+          "name": "tooltip",
+          "init": {},
+          "streams": [
+            {"type": "arc:mouseover","expr": "datum"},
+            {"type": "arc:mouseout","expr": "{}"}
+          ]
+        },
+        {
+          "name": "title",
+          "init": {},
+          "streams": [
+            {
+              "type": "tooltip",
+              "expr": "tooltip ? tooltip.county + ': $' + tooltip.service_charges_revenue_per_capita : ''"
+            }
+          ]
+        }
+      ],
+      "scales": [
+        {
+          "name": "color",
+          "type": "ordinal",
+          "domain": {"data": "table","field": "county"},
+          "range": [
+            "#992842",
+            "#ff2e5f",
+            "#ff6ba6",
+            "#f22cc1",
+            "#801767",
+            "#a445cc",
+            "#172180",
+            "#3f5df2",
+            "#174180",
+            "#3c91e6",
+            "#2b5f80",
+            "#79caf2",
+            "#2ef8ff",
+            "#349999",
+            "#3ff2ae",
+            "#218048",
+            "#52ff42",
+            "#4e991c",
+            "#e3ff42",
+            "#939940",
+            "#f2b73f",
+            "#7f5b21",
+            "#e57e29",
+            "#995e40",
+            "#ff9f80",
+            "#cc3f35"
+          ]
+        }
+      ],
+      "marks": [
+        {
+          "type": "arc",
+          "from": {"data": "table"},
+          "properties": {
+            "enter": {
+              "x": {"value": 220},
+              "y": {"value": 160},
+              "startAngle": {"field": "layout_start"},
+              "endAngle": {"field": "layout_end"},
+              "innerRadius": {"value": 70},
+              "outerRadius": {"value": 120},
+              "fill": {"scale": "color","field": "_id"}
+            },
+            "update": {
+              "fill": {"scale": "color","field": "_id"},
+              "innerRadius": {"value": 70},
+              "outerRadius": {"value": 120},
+              "fillOpacity": {"value": 0.9}
+            },
+            "hover": {
+              "innerRadius": {"value": 80},
+              "outerRadius": {"value": 130},
+              "fill": {
+                "scale": "color",
+                "field": "_id",
+                "test": "datum._id == tooltip._id"
+              },
+              "fillOpacity": {"value": 0.5}
+            }
+          }
+        },
+        {
+          "type": "text",
+          "interactive": false,
+          "properties": {
+            "enter": {
+              "align": {"value": "center"},
+              "fill": {"value": "#333"}
+            },
+            "update": {
+              "startAngle": {"field": "layout_start"},
+              "endAngle": {"field": "layout_end"},
+              "innerRadius": {"value": 70},
+              "x": {"value": 220},
+              "y": {"value": 160},
+              "text": {"signal": "title"},
+              "fillOpacity": [
+                {"test": "!tooltip._id","value": 0},
+                {"value": 1}
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
