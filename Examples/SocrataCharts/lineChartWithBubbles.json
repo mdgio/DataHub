@@ -1,0 +1,186 @@
+{
+  "dataset": {
+    "data": {
+      "features": []
+    },
+    "mappings": {
+      "query": {
+        "where": "1=1",
+        "returnGeometry": false,
+        "returnDistinctValues": false,
+        "returnIdsOnly": false,
+        "returnCountOnly": false,
+        "outFields": "*",
+        "sqlFormat": "standard",
+        "f": "json"
+      }
+    },
+    "query": {
+      "where": "1=1",
+      "returnGeometry": false,
+      "returnDistinctValues": false,
+      "returnIdsOnly": false,
+      "returnCountOnly": false,
+      "outFields": "*",
+      "sqlFormat": "standard",
+      "f": "json"
+    }
+  },
+  "specification": {
+    "inputs": [],
+    "template": {
+      "padding": "strict",
+      "data": [
+        {
+          "name": "dummy",
+          "url": "https://example.org",
+          "format": {
+            "type": "json",
+            "property": "features"
+          }
+        },
+        {
+          "name": "table",
+          "url": "https://data.maryland.gov/resource/ub9y-b3wy.json",
+          "format": {
+            "type": "json",
+            "parse": {
+              "employed": "number",
+              "month": "number"
+            }
+          }
+        }
+      ],
+      "scales": [
+        {
+          "name": "x",
+          "type": "linear",
+          "range": "width",
+          "zero": false,
+          "domain": {
+            "data": "table",
+            "field": "month"
+          }
+        },
+        {
+          "name": "y",
+          "type": "linear",
+          "range": "height",
+          "zero": false,
+          "domain": {
+            "data": "table",
+            "field": "employed"
+          }
+        },
+        {
+          "name": "color",
+          "type": "ordinal",
+          "domain": {
+            "data": "table",
+            "field": "year"
+          },
+          "range": "category20"
+        }
+      ],
+      "legends": [
+        {
+          "fill": "color",
+          "title": "year"
+        }
+      ],
+      "axes": [
+        {
+          "type": "x",
+          "scale": "x",
+          "tickSizeEnd": 0
+        },
+        {
+          "type": "y",
+          "scale": "y"
+        }
+      ],
+      "marks": [
+        {
+          "type": "group",
+          "from": {
+            "data": "table",
+            "transform": [
+              {
+                "type": "facet",
+                "groupby": [
+                  "year"
+                ]
+              }
+            ]
+          },
+          "marks": [
+            {
+              "type": "line",
+              "properties": {
+                "enter": {
+                  "x": {
+                    "scale": "x",
+                    "field": "month"
+                  },
+                  "y": {
+                    "scale": "y",
+                    "field": "employed"
+                  },
+                  "stroke": {
+                    "scale": "color",
+                    "field": "year"
+                  },
+                  "strokeWidth": {
+                    "value": 2
+                  }
+                }
+              }
+            },
+            {
+              "type": "symbol",
+              "from": {
+                "data": "table"
+              },
+              "properties": {
+                "enter": {
+                  "x": {
+                    "scale": "x",
+                    "field": "month"
+                  },
+                  "y": {
+                    "scale": "y",
+                    "field": "employed"
+                  },
+                  "stroke": {
+                    "scale": "color",
+                    "field": "year"
+                  },
+                  "fill": {
+                    "value": "white"
+                  },
+                  "size": {
+                    "value": 30
+                  }
+                },
+                "update": {
+                  "fill": {
+                    "value": "white"
+                  }
+                },
+                "hover": {
+                  "fill": [
+                    {
+                      "test": "datum._id == tooltip._id",
+                      "scale": "color",
+                      "field": "year"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

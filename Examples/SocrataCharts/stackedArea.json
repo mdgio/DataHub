@@ -1,0 +1,187 @@
+{
+  "dataset": {
+    "data": {
+      "features": []
+    },
+    "mappings": {
+      "query": {
+        "where": "1=1",
+        "returnGeometry": false,
+        "returnDistinctValues": false,
+        "returnIdsOnly": false,
+        "returnCountOnly": false,
+        "outFields": "*",
+        "sqlFormat": "standard",
+        "f": "json"
+      }
+    },
+    "query": {
+      "where": "1=1",
+      "returnGeometry": false,
+      "returnDistinctValues": false,
+      "returnIdsOnly": false,
+      "returnCountOnly": false,
+      "outFields": "*",
+      "sqlFormat": "standard",
+      "f": "json"
+    }
+  },
+  "specification": {
+    "inputs": [],
+    "template": {
+      "padding": "strict",
+      "data": [
+        {
+          "name": "dummy",
+          "url": "https://example.org",
+          "format": {
+            "type": "json",
+            "property": "features"
+          }
+        },
+        {
+          "name": "table",
+          "url": "https://data.maryland.gov/resource/ub9y-b3wy.json",
+          "format": {
+            "type": "json",
+            "parse": {
+              "employed": "number",
+              "month": "number"
+            }
+          }
+        },
+        {
+          "name": "stats",
+          "source": "table",
+          "transform": [
+            {
+              "type": "aggregate",
+              "groupby": [
+                "month"
+              ],
+              "summarize": [
+                {
+                  "field": "employed",
+                  "ops": [
+                    "sum"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "scales": [
+        {
+          "name": "x",
+          "type": "ordinal",
+          "range": "width",
+          "points": true,
+          "domain": {
+            "data": "table",
+            "field": "month"
+          }
+        },
+        {
+          "name": "y",
+          "type": "linear",
+          "range": "height",
+          "nice": true,
+          "domain": {
+            "data": "stats",
+            "field": "sum_employed"
+          }
+        },
+        {
+          "name": "color",
+          "type": "ordinal",
+          "range": "category20",
+          "domain": {
+            "data": "table",
+            "field": "year"
+          }
+        }
+      ],
+      "axes": [
+        {
+          "type": "x",
+          "scale": "x"
+        },
+        {
+          "type": "y",
+          "scale": "y"
+        }
+      ],
+      "legends": [
+        {
+          "fill": "color",
+          "title": "year"
+        }
+      ],
+      "marks": [
+        {
+          "type": "group",
+          "from": {
+            "data": "table",
+            "transform": [
+              {
+                "type": "stack",
+                "groupby": [
+                  "month"
+                ],
+                "sortby": [
+                  "year"
+                ],
+                "field": "employed"
+              },
+              {
+                "type": "facet",
+                "groupby": [
+                  "year"
+                ]
+              }
+            ]
+          },
+          "marks": [
+            {
+              "type": "area",
+              "properties": {
+                "enter": {
+                  "interpolate": {
+                    "value": "monotone"
+                  },
+                  "x": {
+                    "scale": "x",
+                    "field": "month"
+                  },
+                  "y": {
+                    "scale": "y",
+                    "field": "layout_start"
+                  },
+                  "y2": {
+                    "scale": "y",
+                    "field": "layout_end"
+                  },
+                  "fill": {
+                    "scale": "color",
+                    "field": "year"
+                  }
+                },
+                "update": {
+                  "fillOpacity": {
+                    "value": 1
+                  }
+                },
+                "hover": {
+                  "fillOpacity": {
+                    "value": 0.5
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
